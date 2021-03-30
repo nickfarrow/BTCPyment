@@ -1,48 +1,42 @@
-# Bitcoin node connection settings
-# This should point to your bitcoin/lnd node,
-# with the correct RPC port as set in your config.
-# Connecting through local host as  i'm running BTCPyment on the node
-host = "127.0.0.1"
-rpcport = "8332"
+import sys
+import toml
 
-# From ~/.bitcoin/bitcoin.conf
-username = "bitcoinrpc"
-password = "RPAPASSWORD"
+if len(sys.argv) > 1:
+    if sys.argv[1] == "--conf":
+        if len(sys.argv) == 3:
+            conf_path = sys.argv[2]
+        else:
+            print("Invalid number of arguments, only --conf FILE is supported now", file=sys.stderr)
+            sys.exit(1)
+    else:
+        print("Unknown argument, only --conf FILE is supported now", file=sys.stderr)
+        sys.exit(1)
+else:
+    conf_path = "config.toml"
 
-# File in which API key will be stored
-api_key_path = "BTCPyment_API_key"
+with open(conf_path, "r") as config_file:
+    config = toml.load(config_file)
 
-# SSH tunnel to node (raspberry pi!)
-# Make sure this command works `ssh HOST@IP -q -N -L 8332:localhost:8332`
-# This forwards the ports required to talk to the node via RPC (or gRPC in the case of lightning)
-# Use host = "127.0.0.1" and you will be able to see your node on 8332
-tunnel_host = None  # "HOST@IP"
+def get_opt(name, default):
+    if name in config:
+        return config[name]
+    else:
+        return default
 
-# Check for payment every xx seconds
-pollrate = 15
-
-# Payment expires after xx seconds
-payment_timeout = 60*60
-
-# Required confirmations for a payment
-required_confirmations = 2
-
-# Global connection attempts
-connection_attempts = 3
-
-# Generic redirect url after payment
-redirect = "https://github.com/nickfarrow/btcpyment"
-
-# Payment method
-pay_method = "bitcoind"
-# Switch payment_method to lnd if you want to use lightning payments instead. And uncomment lnd_dir.
-#pay_method = "lnd"
-# lnd_dir is only needed if you want to copy macaroon and TLS cert locally
-#lnd_dir = "~/.lnd/"
-#lnd_rpcport = "10009"
-#lnd_macaroon = "invoice.macaroon"
-#lnd_cert = "tls.cert"
-
-# DO NOT CHANGE THIS TO TRUE UNLESS YOU WANT ALL PAYMENTS TO AUTOMATICALLY
-# BE CONSIDERED AS PAID.
-free_mode = False
+host = get_opt("host", "127.0.0.1")
+rpcport = get_opt("rpcport", "8332")
+username = get_opt("username", "bitcoinrpc")
+password = get_opt("password", "RPAPASSWORD")
+api_key_path = get_opt("api_key_path", "BTCPyment_API_key")
+tunnel_host = get_opt("tunnel_host", None)
+pollrate = get_opt("pollrate", 15)
+payment_timeout = get_opt("payment_timeout", 60*60)
+required_confirmations = get_opt("required_confirmations", 2)
+connection_attempts = get_opt("connection_attempts", 3)
+redirect = get_opt("redirect", "https://github.com/nickfarrow/btcpyment")
+pay_method = get_opt("pay_method", "bitcoind")
+lnd_dir = get_opt("lnd_dir", "~/.lnd/")
+lnd_rpcport = get_opt("lnd_rpcport", "10009")
+lnd_macaroon = get_opt("lnd_macaroon", "invoice.macaroon")
+lnd_cert = get_opt("lnd_cert", "tls.cert")
+free_mode = get_opt("free_mode", False)

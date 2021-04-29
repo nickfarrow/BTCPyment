@@ -14,7 +14,7 @@ BTCPyment makes donation buttons simple - easy copy paste the one line HTML ifra
 
 # Features
 * Process payments with your own Bitcoin node via RPC and SSH. Bitcoin core, or any other node software that supports RPC calls.
-* Direct peer-to-peer payments without any middleman. No KYC, and greater privacy than donation systems wher Bitcoin addresses are reused multiple times.
+* Direct peer-to-peer payments without any middleman. No KYC, and greater privacy than donation systems where Bitcoin addresses are reused multiple times.
 * Lightweight and highly extendable, basic html and css stying. Modular Python backend, take a [look at the code](server.py) or [lnd.py](/pay/lnd.py)!
 * Natively extendable to all bitcoind node features (e.g. segwit) through RPC.
 * QR codes, customizable required payment confirmations and payment expiry time.
